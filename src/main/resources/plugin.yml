@@ -4,7 +4,7 @@ main: me.eccentric_nz.nonspecificodyssey.NonSpecificOdyssey
 name: Non-Specific-Odyssey
 load: POSTWORLD
 dev-url: http://dev.bukkit.org/server-mods/non-specific-odyssey/
-version: '1.4.4'
+version: '1.4.4-custom'
 permissions:
   nonspecificodyssey.*:
     children:
@@ -16,7 +16,7 @@ permissions:
     default: op
   nonspecificodyssey.use:
     description: Allow players to use the random teleport command
-    default: true
+    default: op
   nonspecificodyssey.end:
     description: Allow players to random teleport to THE END
     default: op
@@ -99,7 +99,7 @@ commands:
   randomteleport:
     aliases: [rtp,nso]
     description: Teleport to a random destination
-    usage: /<command> [world]
+    usage: /<command> <world> <player>
     permission: nonspecificodyssey.use
     permission-message: You don't have the permission <permission> to use this command
   biome:

@@ -37,109 +37,33 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Player player = null;
-        if (sender instanceof Player) {
-            player = (Player) sender;
-        }
+        Player player = Bukkit.getPlayerExact(args[1]);
+
         // If the player typed /randomteleport then do the following...
         // check there is the right number of arguments
         if (cmd.getName().equalsIgnoreCase("randomteleport")) {
             if (player == null) {
-                sender.sendMessage("[" + plugin.getPluginName() + "] " + "This command can only be run by a player!");
+                sender.sendMessage("[" + plugin.getPluginName() + "] " + "Player not online");
                 return true;
             }
-            if (!player.hasPermission("nonspecificodyssey.use")) {
-                sender.sendMessage("[" + plugin.getPluginName() + "] " + "You do not have permission to run this command!");
+            Location random;
+            if (args.length > 0)
+            {
+                // teleport to the specified world
+                World world = plugin.getServer().getWorld(args[0]);
+                if (world == null) {
+                    sender.sendMessage("[" + plugin.getPluginName() + "] " + "Could not find the world '" + args[0] + "'. Are you sure you typed it correctly?");
+                    return true;
+                }
+                random = randomOverworldLocation(world, player);
+                player.sendMessage("Dr0ppin u in, glhf");
+                movePlayer(player, random, world);
                 return true;
             }
-            // get system time
-            long cooldownPeriod = (long) plugin.getConfig().getInt("cooldown_time") * 1000;
-            long systime = System.currentTimeMillis();
-            long playerTime;
-            if (rtpcooldown.containsKey(player.getName())) {
-                playerTime = rtpcooldown.get(player.getName());
-            } else {
-                playerTime = systime - (cooldownPeriod + 1);
-            }
-            if (player.hasPermission("nonspecificodyssey.bypass") || (systime - playerTime) >= cooldownPeriod) {
-                World pworld = player.getWorld();
-                if (!player.hasPermission("nonspecificodyssey.use." + pworld.getName())) {
-                    sender.sendMessage("[" + plugin.getPluginName() + "] " + "You do not have permission to random teleport in this world!");
-                    return true;
-                }
-                Location random;
-                if (args.length == 0) {
-                    switch (pworld.getEnvironment()) {
-                        case NETHER:
-                            if (plugin.getConfig().getBoolean("nether") && player.hasPermission("nonspecificodyssey.nether")) {
-                                random = randomNetherLocation(pworld);
-                            } else {
-                                player.sendMessage("[" + plugin.getPluginName() + "] " + "You cannot random teleport in the Nether");
-                                return true;
-                            }
-                            break;
-                        case THE_END:
-                            if (plugin.getConfig().getBoolean("end") && player.hasPermission("nonspecificodyssey.end")) {
-                                random = randomTheEndLocation(pworld);
-                            } else {
-                                player.sendMessage("[" + plugin.getPluginName() + "] " + "You cannot random teleport in The End");
-                                return true;
-                            }
-                            break;
-                        default:
-                            random = randomOverworldLocation(pworld, player);
-                            break;
-                    }
-                    // teleport within this world only
-                    sender.sendMessage("[" + plugin.getPluginName() + "] " + "Teleporting...");
-                    movePlayer(player, random, pworld);
-                    if (plugin.getConfig().getBoolean("cooldown")) {
-                        rtpcooldown.put(player.getName(), systime);
-                    }
-                    return true;
-                }
-                if (args.length > 0) {
-                    // teleport to the specified world
-                    World world = plugin.getServer().getWorld(args[0]);
-                    if (world == null) {
-                        sender.sendMessage("[" + plugin.getPluginName() + "] " + "Could not find the world '" + args[0] + "'. Are you sure you typed it correctly?");
-                        return true;
-                    }
-                    if (!player.hasPermission("nonspecificodyssey.use." + args[0])) {
-                        sender.sendMessage("[" + plugin.getPluginName() + "] " + "You do not have permission to random teleport to this world!");
-                        return true;
-                    }
-                    switch (world.getEnvironment()) {
-                        case NETHER:
-                            if (plugin.getConfig().getBoolean("nether") && player.hasPermission("nonspecificodyssey.nether")) {
-                                random = randomNetherLocation(world);
-                            } else {
-                                player.sendMessage("[" + plugin.getPluginName() + "] " + "You cannot random teleport to the Nether");
-                                return true;
-                            }
-                            break;
-                        case THE_END:
-                            if (plugin.getConfig().getBoolean("end") && player.hasPermission("nonspecificodyssey.end")) {
-                                random = randomTheEndLocation(world);
-                            } else {
-                                player.sendMessage("[" + plugin.getPluginName() + "] " + "You cannot random teleport to The End");
-                                return true;
-                            }
-                            break;
-                        default:
-                            random = randomOverworldLocation(world, player);
-                            break;
-                    }
-                    sender.sendMessage("[" + plugin.getPluginName() + "] " + "Teleporting to " + world.getName() + "...");
-                    movePlayer(player, random, world);
-                    rtpcooldown.put(player.getName(), systime);
-                    return true;
-                }
-            } else {
-                long secs = Math.round((cooldownPeriod - (systime - playerTime)) / 1000);
-                sender.sendMessage("[" + plugin.getPluginName() + "] " + "Your random teleport cooldown period still has " + secs + " seconds to go.");
-                return true;
-            }
+            else
+                return false;
+
+
         }
         if (cmd.getName().equalsIgnoreCase("biome")) {
             if (args.length < 1) {
