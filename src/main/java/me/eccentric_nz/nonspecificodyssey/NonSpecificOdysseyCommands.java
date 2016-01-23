@@ -36,18 +36,22 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Player player = Bukkit.getPlayerExact(args[1]);
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    {
+        Player player = null;
+        if (args.length > 1)
+            player = Bukkit.getPlayerExact(args[1]);
 
         // If the player typed /randomteleport then do the following...
         // check there is the right number of arguments
-        if (cmd.getName().equalsIgnoreCase("randomteleport")) {
+        if (cmd.getName().equalsIgnoreCase("randomteleport"))
+        {
             if (player == null) {
                 sender.sendMessage("[" + plugin.getPluginName() + "] " + "Player not online");
                 return true;
             }
             Location random;
-            if (args.length > 0)
+            if (args.length > 1)
             {
                 // teleport to the specified world
                 World world = plugin.getServer().getWorld(args[0]);
@@ -56,7 +60,7 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
                     return true;
                 }
                 random = randomOverworldLocation(world, player);
-                player.sendMessage("Dr0ppin u in, glhf");
+                //player.sendMessage("Dr0ppin u in, glhf");
                 movePlayer(player, random, world);
                 return true;
             }
@@ -230,6 +234,8 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
         plugin.getListener().getTravellers().add(uuid);
         l.setY(l.getY() + 0.2);
         final Location theLocation = l;
+
+        theLocation.setPitch(64);
 
         final World to = theLocation.getWorld();
         final boolean allowFlight = p.getAllowFlight();
