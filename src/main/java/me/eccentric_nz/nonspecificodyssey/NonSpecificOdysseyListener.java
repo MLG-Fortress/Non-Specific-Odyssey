@@ -111,7 +111,7 @@ public class NonSpecificOdysseyListener implements Listener {
                             if (biome != null) {
                                 the_location = plugin.getCommando().searchBiome(p, biome, the_world);
                             } else {
-                                the_location = plugin.getCommando().randomOverworldLocation(the_world);
+                                the_location = plugin.getCommando().randomOverworldLocation(the_world, event.getPlayer());
                             }
                             final Location random = the_location;
                             if (random != null) {

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
+
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
@@ -20,6 +23,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 public class NonSpecificOdysseyCommands implements CommandExecutor {
 
@@ -83,7 +87,7 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
                             }
                             break;
                         default:
-                            random = randomOverworldLocation(pworld);
+                            random = randomOverworldLocation(pworld, player);
                             break;
                     }
                     // teleport within this world only
@@ -123,7 +127,7 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
                             }
                             break;
                         default:
-                            random = randomOverworldLocation(world);
+                            random = randomOverworldLocation(world, player);
                             break;
                     }
                     sender.sendMessage("[" + plugin.getPluginName() + "] " + "Teleporting to " + world.getName() + "...");
@@ -218,21 +222,29 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
         return false;
     }
 
-    public Location randomOverworldLocation(World w) {
+    public Location randomOverworldLocation(World w, Player player) {
         boolean danger = true;
         Location random = null;
         // get max_radius from config
-        while (danger == true) {
+        while (danger == true)
+        {
             int x = randomX();
             int z = randomZ();
-            int y = 255;
+            //int y = 255;
             int highest = w.getHighestBlockYAt(x, z);
-            if (highest > 3) {
+            if (highest > 3)
+            {
                 Material chkBlock = w.getBlockAt(x, highest, z).getRelative(BlockFace.DOWN).getType();
-                if (!chkBlock.equals(Material.WATER) && !chkBlock.equals(Material.STATIONARY_WATER) && !chkBlock.equals(Material.LAVA) && !chkBlock.equals(Material.STATIONARY_LAVA) && !chkBlock.equals(Material.FIRE)) {
+                if (!chkBlock.equals(Material.WATER) && !chkBlock.equals(Material.STATIONARY_WATER) && !chkBlock.equals(Material.LAVA) && !chkBlock.equals(Material.STATIONARY_LAVA) && !chkBlock.equals(Material.FIRE))
+                {
                     random = w.getBlockAt(x, highest, z).getLocation();
-                    danger = false;
-                    break;
+                    if (PreciousStones.API().flagAppliesToPlayer(player, FieldFlag.COMMAND_ON_ENTER, random));
+                    else
+                    {
+                        danger = false;
+                        random = w.getBlockAt(x, 255, z).getLocation();
+                        break;
+                    }
                 }
             }
         }
