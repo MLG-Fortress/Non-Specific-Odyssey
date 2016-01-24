@@ -22,6 +22,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
@@ -248,33 +249,27 @@ public class NonSpecificOdysseyCommands implements CommandExecutor {
             world.loadChunk(chunk);
         }
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 p.teleport(theLocation);
                 p.getWorld().playSound(theLocation, Sound.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "timetotp " + p.getName());
             }
         }, 10L);
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
             @Override
-            public void run() {
-                p.teleport(theLocation);
-                if (plugin.getConfig().getBoolean("no_damage")) {
-                    p.setNoDamageTicks(plugin.getConfig().getInt("no_damage_time") * 20);
-                }
-                if (p.getGameMode() == GameMode.CREATIVE || (allowFlight && crossWorlds)) {
-                    p.setAllowFlight(true);
-                }
-            }
-        }, 15L);
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                if (plugin.getListener().getTravellers().contains(uuid)) {
+            public void run()
+            {
+                if (plugin.getListener().getTravellers().contains(uuid))
+                {
                     plugin.getListener().getTravellers().remove(uuid);
                 }
             }
-        }, 100L);
+        }, 500L);
     }
 
     private int randomX() {
