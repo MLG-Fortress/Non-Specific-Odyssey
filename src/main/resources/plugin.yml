@@ -5,7 +5,7 @@ name: Non-Specific-Odyssey
 load: POSTWORLD
 dev-url: http://dev.bukkit.org/server-mods/non-specific-odyssey/
 version: '1.4.4-custom'
-depend: [SimpleClans]
+depend: [PreciousStones]
 permissions:
   nonspecificodyssey.*:
     children:
